@@ -32,7 +32,7 @@ requirements:
     - ninja   # [linux or osx]
     - pip     # [linux]
     - jinja2  # [linux]
-    - llvm-openmp   # [linux]
+    - llvm-openmp   # [linux and osx]
     - libglvnd-glx-cos7-x86_64 # [linux]
     - swig >=4.0.0
     - mkl
