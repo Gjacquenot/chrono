@@ -21,7 +21,7 @@ export MKL_INTERFACE_LAYER=LP64
 export MKL_THREADING_LAYER=INTEL
 
 if [ `uname` == Darwin ]; then
-    sed -i '' 's/${PYTHON_LIBRARY}//g' $SRC_DIR/src/chrono_python/CMakeLists.txt
+    sed -i '' 's/${PYTHON_LIBRARY}//g' $SRC_DIR/src/chrono/CMakeLists.txt
 fi
 export LDFLAGS="-Wl,-undefined,dynamic_lookup $LDFLAGS"
 
