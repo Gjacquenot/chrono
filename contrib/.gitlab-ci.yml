@@ -563,17 +563,20 @@ macos-apple:monterey:test:
   extends: .macos
   before_script:
     - export CONDA_NPY=19
-    - curl https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O ~/miniconda.sh
+    - brew install wget
+    - ARCHITECTURE=`uname -m`
+    - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-$ARCHITECTURE.sh -O ~/miniconda.sh
     - rm -r $HOME/miniconda > /dev/null 2>&1 || FAILED=true
     - bash ~/miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
     - conda install --yes -c intel jinja2
     - conda config --set show_channel_urls true
     - conda install conda-build anaconda-client conda-verify --yes
-    - conda config --add channels https://conda.anaconda.org/conda-forge
-    - conda config --add channels https://conda.anaconda.org/intel
+    - conda config --add channels conda-forge
+    - conda config --add channels intel
+    - conda config --add channels dlr-sc
     #- conda install -c dlr-sc opencascade --yes
-    - conda install -c intel mkl-devel --yes
+    #- conda install -c intel mkl-devel --yes
     - ls $HOME/miniconda/lib/
     - conda build purge-all
     # this command is needed to get the git describe data needed by the numbering
@@ -595,7 +598,7 @@ macos:macos-deploy-python3.6:
   script:
     - echo "Build PyChrono 3.6 and deploy via Anaconda..."
     - conda build purge-all
-    - conda build ./contrib/packaging-python/conda --no-remove-work-dir --dirty --python=3.6
+    - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.6
     - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/osx-64/pychrono*.bz2 -l develop --force
   when: manual
 macos:macos-deploy-python3.7:
@@ -605,7 +608,7 @@ macos:macos-deploy-python3.7:
   script:
     - echo "Build PyChrono 3.7 and deploy via Anaconda..."
     - conda build purge-all
-    - conda build ./contrib/packaging-python/conda --no-remove-work-dir --dirty --python=3.7
+    - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.7
     - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/osx-64/pychrono*.bz2 -l develop --force
   when: manual
 macos:macos-deploy-python3.8:
@@ -615,6 +618,6 @@ macos:macos-deploy-python3.8:
   script:
     - echo "Build PyChrono 3.8 and deploy via Anaconda..."
     - conda build purge-all
-    - conda build ./contrib/packaging-python/conda --no-remove-work-dir --dirty --python=3.8
+    - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.8
     - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/osx-64/pychrono*.bz2 -l develop --force
   when: manual
