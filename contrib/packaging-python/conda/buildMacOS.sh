@@ -21,7 +21,7 @@ export MKL_INTERFACE_LAYER=LP64
 export MKL_THREADING_LAYER=INTEL
 
 if [ `uname` == Darwin ]; then
-    sed -i '' 's/${PYTHON_LIBRARY}//g' $SRC_DIR/src/chrono/CMakeLists.txt
+    sed -i '' 's/${PYTHON_LIBRARY}//g' $SRC_DIR/src/chrono_swig/chrono_python/CMakeLists.txt
 fi
 export LDFLAGS="-Wl,-undefined,dynamic_lookup $LDFLAGS"
 
@@ -51,7 +51,7 @@ cmake -DCMAKE_INSTALL_PREFIX=$PREFIX \
  -DENABLE_MODULE_PARDISO_MKL=ON \
  -DMKL_INCLUDE_DIR=$HOME/miniconda/include \
  -DMKL_RT_LIBRARY=$HOME/miniconda/lib/libmkl_rt.dylib \
- -DEIGEN3_INCLUDE_DIR="/usr/local/include/eigen3" "$HOME/miniconda/include" \
+ -DEIGEN3_INCLUDE_DIR=$HOME/miniconda/include \
  -DPYCHRONO_DATA_PATH=../../../../../../share/chrono/data/ \
  ./..
 # Build step
