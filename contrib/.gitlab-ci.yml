@@ -452,7 +452,7 @@ windows:vs2019:deploy:
     - conda activate build-env
     #Conda install dependencies
     - conda install --yes anaconda-client conda-build
-    - mv -f .\packaging-python\conda\upload.py C:\Users\builder\miniconda3\pkgs\anaconda-client-1.10.0-*\Lib\site-packages\binstar_client\commands\upload.py
+    - mv -Force .\packaging-python\conda\upload.py C:\Users\builder\miniconda3\pkgs\anaconda-client-1.10.0-*\Lib\site-packages\binstar_client\commands\upload.py
     #- conda install --yes -c intel mkl-devel
     #- conda install --yes -c conda-forge glew glfw irrlicht swig=4.0.2  
     #- conda install -c dlr-sc opencascade --yes
