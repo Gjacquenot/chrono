@@ -451,7 +451,8 @@ windows:vs2019:deploy:
     #Activate conda environment
     - conda activate build-env
     #Conda install dependencies
-    - conda install --yes anaconda-client conda-build
+    - conda install --yes anaconda-client=1.6.7
+    - conda install conda-build
     - cd $CI_PROJECT_DIR
     #- conda install --yes -c intel mkl-devel
     #- conda install --yes -c conda-forge glew glfw irrlicht swig=4.0.2  
