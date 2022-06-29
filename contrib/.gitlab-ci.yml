@@ -635,14 +635,14 @@ macos-intel:monterey:macos-deploy-python3.8:
     - monterey
     - intel
 
-macos-apple:monterey:macos-deploy-python3.6:
+macos-apple:monterey:macos-deploy-python3.9:
   stage: deploy
   needs: []
   extends: .macos-deploy-base
   script:
     - echo "Build PyChrono 3.6 and deploy via Anaconda..."
     - conda build purge-all
-    - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.6
+    - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.9
     - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/osx-64/pychrono*.bz2 -l develop --force
   when: manual
   tags:
@@ -650,29 +650,14 @@ macos-apple:monterey:macos-deploy-python3.6:
     - monterey
     - apple
 
-macos-apple:monterey:macos-deploy-python3.7:
+macos-apple:monterey:macos-deploy-python3.10:
   stage: deploy
   needs: []
   extends: .macos-deploy-base
   script:
     - echo "Build PyChrono 3.7 and deploy via Anaconda..."
     - conda build purge-all
-    - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.7
-    - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/osx-64/pychrono*.bz2 -l develop --force
-  when: manual
-  tags:
-    - macos
-    - monterey
-    - apple
-
-macos-apple:monterey:macos-deploy-python3.8:
-  stage: deploy
-  needs: []
-  extends: .macos-deploy-base
-  script:
-    - echo "Build PyChrono 3.8 and deploy via Anaconda..."
-    - conda build purge-all
-    - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.8
+    - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.10
     - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/osx-64/pychrono*.bz2 -l develop --force
   when: manual
   tags:
