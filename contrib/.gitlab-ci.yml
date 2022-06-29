@@ -16,7 +16,7 @@ stages:
 .archlinux:
   tags:
   - linux
-  image: 
+  image:
     name: archlinux:base-devel
     entrypoint: ["/usr/bin/bash", "-c"]
   before_script:
@@ -44,8 +44,8 @@ linux:arch-gcc:build:
   - cd build
   - echo $CI_PROJECT_DIR
   - cmake ../ --preset=linuxci
-    -DCMAKE_C_COMPILER=/usr/bin/gcc 
-    -DCMAKE_CXX_COMPILER=/usr/bin/g++ 
+    -DCMAKE_C_COMPILER=/usr/bin/gcc
+    -DCMAKE_CXX_COMPILER=/usr/bin/g++
     -DEIGEN3_INCLUDE_DIR=/usr/include/eigen3
     -DBUILD_TESTING_GPU=FALSE
     -DBUILD_TESTING_SENSOR=FALSE
@@ -54,7 +54,7 @@ linux:arch-gcc:build:
     expire_in: 60m
     paths:
     - build/
-    
+
 
 linux:arch-gcc:test:
   stage: test
@@ -63,7 +63,7 @@ linux:arch-gcc:test:
   script:
   - cd build
   - export OMP_NUM_THREADS=8
-  - export CTEST_OUTPUT_ON_FAILURE=1 
+  - export CTEST_OUTPUT_ON_FAILURE=1
   - ninja test
   dependencies: ["linux:arch-gcc:build"]
 
@@ -71,7 +71,7 @@ linux:arch-gcc:test:
 linux:doxygen:deploy:
   tags:
   - linux
-  image: 
+  image:
     name: archlinux:base-devel
     entrypoint: ["/usr/bin/bash", "-c"]
   stage: deploy
@@ -113,7 +113,7 @@ linux:doxygen:deploy:
   rules:
     - if: '$CI_COMMIT_REF_NAME == "develop"'
       when: always
-  
+
 
 
 linux:arch-llvm:build:
@@ -122,9 +122,9 @@ linux:arch-llvm:build:
   script:
   - pacman -S --noconfirm llvm clang openmp
   - cd build
-  - cmake ../ --preset=linuxci 
+  - cmake ../ --preset=linuxci
     -DCMAKE_C_COMPILER=/usr/bin/clang
-    -DCMAKE_CXX_COMPILER=/usr/bin/clang++ 
+    -DCMAKE_CXX_COMPILER=/usr/bin/clang++
     -DEIGEN3_INCLUDE_DIR=/usr/include/eigen3
     -DCUDA_HOST_COMPILER=/usr/bin/gcc
     -DBUILD_TESTING_GPU=FALSE
@@ -146,7 +146,7 @@ linux:arch-llvm:test:
   - pacman -S --noconfirm llvm clang openmp
   - cd build
   - export OMP_NUM_THREADS=8
-  - export CTEST_OUTPUT_ON_FAILURE=1 
+  - export CTEST_OUTPUT_ON_FAILURE=1
   - ninja test
   dependencies: ["linux:arch-llvm:build"]
 
@@ -163,8 +163,8 @@ linux:arch-llvm:test:
   before_script:
     - uname -a
     - export DEBIAN_FRONTEND=noninteractive
-    - apt-get update; apt-get -y install wget python git 
-        cmake ninja-build build-essential libboost-dev swig libeigen3-dev 
+    - apt-get update; apt-get -y install wget python git
+        cmake ninja-build build-essential libboost-dev swig libeigen3-dev
         libglfw3-dev libglm-dev libglew-dev freeglut3-dev libirrlicht-dev
         libxxf86vm-dev libopenmpi-dev python3 python3-dev libhdf5-dev
     - ldconfig
@@ -189,8 +189,8 @@ linux:arch-llvm:test:
     # this script overwrites the default ubuntu script to include conda preparations
     - uname -a
     - export DEBIAN_FRONTEND=noninteractive
-    - apt-get update; apt-get -y install wget python git 
-        cmake ninja-build build-essential libboost-dev swig libeigen3-dev 
+    - apt-get update; apt-get -y install wget python git
+        cmake ninja-build build-essential libboost-dev swig libeigen3-dev
         libglfw3-dev libglm-dev libglew-dev freeglut3-dev libirrlicht-dev
         libxxf86vm-dev python3 python3-dev libhdf5-dev
     - ldconfig
@@ -234,15 +234,15 @@ linux:ubuntu2004:build:
   extends: .ubuntu
   script:
     - cd build
-    - cmake ../ -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=TRUE 
-        -DBUILD_BENCHMARKING=TRUE -DENABLE_MODULE_POSTPROCESS=TRUE 
-        -DENABLE_MODULE_PYTHON=TRUE -DENABLE_MODULE_COSIMULATION=FALSE 
-        -DENABLE_MODULE_IRRLICHT=TRUE -DENABLE_MODULE_VEHICLE=TRUE 
+    - cmake ../ -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=TRUE
+        -DBUILD_BENCHMARKING=TRUE -DENABLE_MODULE_POSTPROCESS=TRUE
+        -DENABLE_MODULE_PYTHON=TRUE -DENABLE_MODULE_COSIMULATION=FALSE
+        -DENABLE_MODULE_IRRLICHT=TRUE -DENABLE_MODULE_VEHICLE=TRUE
         -DENABLE_MODULE_MULTICORE=TRUE -DENABLE_MODULE_OPENGL=TRUE
         -DENABLE_MODULE_SYNCHRONO=TRUE -DENABLE_MODULE_CSHARP=TRUE
         -DENABLE_MODULE_GPU=TRUE -DENABLE_MODULE_DISTRIBUTED=TRUE
         -DENABLE_HDF5=TRUE
-        -DCMAKE_C_COMPILER=/usr/bin/gcc 
+        -DCMAKE_C_COMPILER=/usr/bin/gcc
         -DCMAKE_CXX_COMPILER=/usr/bin/g++
         -DCUDA_HOST_COMPILER=/usr/bin/gcc
         -DPYTHON_EXECUTABLE=/usr/bin/python3
@@ -265,7 +265,7 @@ linux:ubuntu2004:test:
   script:
     - cd build
     - export OMP_NUM_THREADS=8
-    - export CTEST_OUTPUT_ON_FAILURE=1 
+    - export CTEST_OUTPUT_ON_FAILURE=1
     - ninja test
   dependencies: ["linux:ubuntu2004:build"]
 
@@ -319,7 +319,7 @@ linux:ubuntu2004:deploy-python3.8:
     - git submodule init
     - git submodule update
     - mkdir -p build
-    
+
 linux:almalinux:build:
   stage: build
   extends: .almalinux
@@ -332,11 +332,11 @@ linux:almalinux:build:
         -DENABLE_MODULE_IRRLICHT=ON
         -DENABLE_MODULE_PARDISO_MKL=ON
         -DENABLE_MODULE_PYTHON=ON
-        -DENABLE_MODULE_COSIMULATION=ON 
-        -DENABLE_MODULE_POSTPROCESS=ON 
+        -DENABLE_MODULE_COSIMULATION=ON
+        -DENABLE_MODULE_POSTPROCESS=ON
         -DENABLE_MODULE_OPENGL=ON
         -DENABLE_MODULE_VEHICLE=ON
-        -DENABLE_HDF5=ON 
+        -DENABLE_HDF5=ON
     - ninja -j 8
   artifacts:
     expire_in: 60m
@@ -350,7 +350,7 @@ linux:almalinux:test:
   script:
     - cd build
     - export OMP_NUM_THREADS=8
-    - export CTEST_OUTPUT_ON_FAILURE=1 
+    - export CTEST_OUTPUT_ON_FAILURE=1
     - ninja test
   dependencies: ["linux:almalinux:build"]
 
@@ -453,7 +453,7 @@ windows:vs2019:deploy:
     #Conda install dependencies
     - conda install --yes anaconda-client conda-build
     #- conda install --yes -c intel mkl-devel
-    #- conda install --yes -c conda-forge glew glfw irrlicht swig=4.0.2  
+    #- conda install --yes -c conda-forge glew glfw irrlicht swig=4.0.2
     #- conda install -c dlr-sc opencascade --yes
     - conda build purge-all timeout /t 240
     - conda build .\contrib\packaging-python\conda -c conda-forge -c dlr-sc --python=3.10 --no-remove-work-dir
@@ -530,7 +530,7 @@ macos-intel:monterey:build:
     - macos
     - monterey
     - intel
-    
+
 macos-intel:monterey:test:
   extends: .macos-monterey-test
   tags:
@@ -585,13 +585,13 @@ macos-apple:monterey:test:
     # conda build uses "build.sh" for both Linux and MacOS. Since we do things differently, we do the following workaround
     - mv -f ./contrib/packaging-python/conda/buildMacOS.sh ./contrib/packaging-python/conda/build.sh
     # same goes for the post install script: we don't want it to operate on MacOS bs it wouldn't find any sensor.py (not enabled in macos)
-    - rm ./contrib/packaging-python/conda/post-link.sh 
+    - rm ./contrib/packaging-python/conda/post-link.sh
     - conda install -c conda-forge llvm-openmp --yes
   environment:
     name: pychrono-macos
     url: https://anaconda.org/projectchrono/pychrono
 
-macos:macos-deploy-python3.6:
+macos-intel:monterey:macos-deploy-python3.6:
   stage: deploy
   needs: []
   extends: .macos-deploy-base
@@ -601,7 +601,12 @@ macos:macos-deploy-python3.6:
     - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.6
     - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/osx-64/pychrono*.bz2 -l develop --force
   when: manual
-macos:macos-deploy-python3.7:
+  tags:
+    - macos
+    - monterey
+    - intel
+
+macos-intel:monterey:macos-deploy-python3.7:
   stage: deploy
   needs: []
   extends: .macos-deploy-base
@@ -611,7 +616,11 @@ macos:macos-deploy-python3.7:
     - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.7
     - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/osx-64/pychrono*.bz2 -l develop --force
   when: manual
-macos:macos-deploy-python3.8:
+  tags:
+    - macos
+    - monterey
+    - intel
+macos-intel:monterey:macos-deploy-python3.8:
   stage: deploy
   needs: []
   extends: .macos-deploy-base
@@ -621,3 +630,52 @@ macos:macos-deploy-python3.8:
     - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.8
     - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/osx-64/pychrono*.bz2 -l develop --force
   when: manual
+  tags:
+    - macos
+    - monterey
+    - intel
+
+macos-apple:monterey:macos-deploy-python3.6:
+  stage: deploy
+  needs: []
+  extends: .macos-deploy-base
+  script:
+    - echo "Build PyChrono 3.6 and deploy via Anaconda..."
+    - conda build purge-all
+    - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.6
+    - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/osx-64/pychrono*.bz2 -l develop --force
+  when: manual
+  tags:
+    - macos
+    - monterey
+    - apple
+
+macos-apple:monterey:macos-deploy-python3.7:
+  stage: deploy
+  needs: []
+  extends: .macos-deploy-base
+  script:
+    - echo "Build PyChrono 3.7 and deploy via Anaconda..."
+    - conda build purge-all
+    - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.7
+    - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/osx-64/pychrono*.bz2 -l develop --force
+  when: manual
+  tags:
+    - macos
+    - monterey
+    - apple
+
+macos-apple:monterey:macos-deploy-python3.8:
+  stage: deploy
+  needs: []
+  extends: .macos-deploy-base
+  script:
+    - echo "Build PyChrono 3.8 and deploy via Anaconda..."
+    - conda build purge-all
+    - conda build ./contrib/packaging-python/conda -c intel -c conda-forge -c dlr-sc --no-remove-work-dir --dirty --python=3.8
+    - anaconda -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/osx-64/pychrono*.bz2 -l develop --force
+  when: manual
+  tags:
+    - macos
+    - monterey
+    - apple
