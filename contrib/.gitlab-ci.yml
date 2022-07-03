@@ -451,10 +451,14 @@ windows:vs2019:deploy:
     #Activate conda environment
     - conda activate build-env
     #Conda install dependencies
-    - conda install --yes anaconda-client=1.6.7
+    - conda install --yes anaconda-client
     - conda install conda-build
     - conda update conda --yes
+    - cd C:\Users\builder\miniconda3\pkgs\anaconda-client-1.1-*\Lib\site-packages\binstar_client\commands\
+    - $location=pwd
     - cd $CI_PROJECT_DIR
+    - mv -Force $CI_PROJECT_DIR\contrib\packaging-python\conda\upload.py $location\upload.py
+
     #- conda install --yes -c intel mkl-devel
     #- conda install --yes -c conda-forge glew glfw irrlicht swig=4.0.2
     #- conda install -c dlr-sc opencascade --yes
@@ -467,7 +471,7 @@ windows:vs2019:deploy:
     - anaconda --token "$Env:ANACONDA_TOKEN" upload "$Env:CONDA_INSTALL_LOCN\envs\build-env\conda-bld\win-64\pychrono*.bz2" --force
     - conda build purge  timeout /t 240
     - conda build .\contrib\packaging-python\conda -c conda-forge -c dlr-sc -c intel --python=3.6 --no-remove-work-dir
-    - anaconda --token "$Env:ANACONDA_TOKEN" upload "$Env:CONDA_INSTALL_LOCN"\envs\build-env\conda-bld\win-64\pychrono*.bz2" --force
+    - anaconda --token "$Env:ANACONDA_TOKEN" upload "$Env:CONDA_INSTALL_LOCN\envs\build-env\conda-bld\win-64\pychrono*.bz2" --force
     - get-content outputfile.txt
     - Copy-Item "./outputfile.txt" -Destination "./logs/"
     #- Remove-Item $Env:CONDA_INSTALL_LOCN\conda-bld\*pychrono* -Recurse -Force
