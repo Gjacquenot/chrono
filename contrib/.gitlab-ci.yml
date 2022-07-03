@@ -456,12 +456,12 @@ windows:vs2019:deploy:
     - conda update conda --yes
     - cd $CI_PROJECT_DIR
     #- conda install --yes -c intel mkl-devel
-    #- conda install --yes -c conda-forge glew glfw irrlicht swig=4.0.2  
+    #- conda install --yes -c conda-forge glew glfw irrlicht swig=4.0.2
     #- conda install -c dlr-sc opencascade --yes
-    - set REQUESTS_CA_BUNDLE=C:\users\builder\miniconda3\Lib\site-packages\certifi\cacert.pem 
+    - set REQUESTS_CA_BUNDLE=C:\users\builder\miniconda3\Lib\site-packages\certifi\cacert.pem
     - conda build purge-all timeout /t 240
     - conda build .\contrib\packaging-python\conda -c conda-forge -c dlr-sc -c intel --python=3.10 --no-remove-work-dir
-    - anaconda --token "$Env:ANACONDA_TOKEN" upload "$Env:CONDA_INSTALL_LOCN"\envs\build-env\conda-bld\win-64\pychrono*.bz2 --force
+    - anaconda --token "$Env:ANACONDA_TOKEN" upload "$Env:CONDA_INSTALL_LOCN\envs\build-env\conda-bld\win-64\pychrono*.bz2" --force
     - conda build purge-all  timeout /t 240
     - conda build .\contrib\packaging-python\conda -c conda-forge -c dlr-sc -c intel --python=3.8 --no-remove-work-dir
     - anaconda --token "$Env:ANACONDA_TOKEN" upload "$Env:CONDA_INSTALL_LOCN"\envs\build-env\conda-bld\win-64\pychrono*.bz2 --force --label develop  >> "$Env:LOG_DIR"\condauploadlog.txt 2>&1
