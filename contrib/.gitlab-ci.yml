@@ -413,7 +413,6 @@ windows:vs2019:build:
     paths:
       - build/
 
-
 windows:vs2019:test:
   stage: test
   needs: ["windows:vs2019:build"]
@@ -422,7 +421,6 @@ windows:vs2019:test:
   - cd build
   - ctest --output-on-failure
   dependencies: ["windows:vs2019:build"]
-
 
 windows:vs2019:deploy:
   stage: deploy
@@ -463,7 +461,7 @@ windows:vs2019:deploy:
     #- conda install -c dlr-sc opencascade --yes
     - set REQUESTS_CA_BUNDLE=C:\users\builder\miniconda3\Lib\site-packages\certifi\cacert.pem
     - conda build purge-all timeout /t 240
-    - conda build .\contrib\packaging-python\conda -c conda-forge -c dlr-sc -c intel --python=3.10 --no-remove-work-dir
+    - conda build .\contrib\packaging-python\conda -c conda-forge -c dlr-sc -c intel --python=3.9 --no-remove-work-dir
     - anaconda --token "$Env:ANACONDA_TOKEN" upload "$Env:CONDA_INSTALL_LOCN\envs\build-env\conda-bld\win-64\pychrono*.bz2" --force
     - conda build purge-all  timeout /t 240
     - conda build .\contrib\packaging-python\conda -c conda-forge -c dlr-sc -c intel --python=3.8 --no-remove-work-dir
@@ -471,8 +469,8 @@ windows:vs2019:deploy:
     - conda build purge  timeout /t 240
     - conda build .\contrib\packaging-python\conda -c conda-forge -c dlr-sc -c intel --python=3.6 --no-remove-work-dir
     - anaconda --token "$Env:ANACONDA_TOKEN" upload "$Env:CONDA_INSTALL_LOCN\envs\build-env\conda-bld\win-64\pychrono*.bz2" --force
-    - get-content outputfile.txt
-    - Copy-Item "./outputfile.txt" -Destination "./logs/"
+    #- get-content outputfile.txt
+    #- Copy-Item "./outputfile.txt" -Destination "./logs/"
     #- Remove-Item $Env:CONDA_INSTALL_LOCN\conda-bld\*pychrono* -Recurse -Force
     - conda deactivate build-env
     - rm -r C:\Users\builder\miniconda3\envs\build-env
@@ -485,8 +483,6 @@ windows:vs2019:deploy:
     expire_in: 60m
     paths:
       - ./logs/
-
-
 
 #----------------#
 # macOS Builders #
