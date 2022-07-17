@@ -1,6 +1,3 @@
-REM renaming irrlicht conda folder to aid in copying necessary irrlicht files
-mv $env:CONDA_INSTALL_LOCN/pkgs/irrlicht* $env:CONDA_INSTALL_LOCN/pkgs/irrlicht
-
 REM To avoid building in work/ alongside the source. Rather build in work/build/
 mkdir build
 cd build
