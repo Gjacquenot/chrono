@@ -125,6 +125,17 @@ ChVehicleVisualSystemIrrlicht::~ChVehicleVisualSystemIrrlicht() {
     delete m_camera_control;
 }
 
+void ChVehicleVisualSystemIrrlicht::AttachVehicle(ChVehicle* vehicle) {
+    ChVehicleVisualSystem::AttachVehicle(vehicle);
+
+    // Add the Irrlicht camera (controlled through the chase-cam) if already initialized
+    if (GetDevice()) {
+        ChVector<> cam_pos = m_camera->GetCameraPos();
+        ChVector<> cam_target = m_camera->GetTargetPos();
+        AddCamera(cam_pos, cam_target);
+    }
+}
+
 void ChVehicleVisualSystemIrrlicht::Initialize() {
     ChVisualSystemIrrlicht::Initialize();
 
@@ -134,16 +145,6 @@ void ChVehicleVisualSystemIrrlicht::Initialize() {
 
     // Add the Irrlicht camera (controlled through the chase-cam) if already attach to a vehicle
     if (m_vehicle) {
-        ChVector<> cam_pos = m_camera->GetCameraPos();
-        ChVector<> cam_target = m_camera->GetTargetPos();
-        AddCamera(cam_pos, cam_target);
-    }
-}
-
-void ChVehicleVisualSystemIrrlicht::OnAttachToVehicle() {
-    ChVehicleVisualSystem::OnAttachToVehicle();
-    // Add the Irrlicht camera (controlled through the chase-cam) if already initialized
-    if (GetDevice()) {
         ChVector<> cam_pos = m_camera->GetCameraPos();
         ChVector<> cam_target = m_camera->GetTargetPos();
         AddCamera(cam_pos, cam_target);
@@ -221,8 +222,8 @@ void ChVehicleVisualSystemIrrlicht::Advance(double step) {
 // -----------------------------------------------------------------------------
 // Render the Irrlicht scene and additional visual elements.
 // -----------------------------------------------------------------------------
-void ChVehicleVisualSystemIrrlicht::DrawAll() {
-    ChVisualSystemIrrlicht::DrawAll();
+void ChVehicleVisualSystemIrrlicht::Render() {
+    ChVisualSystemIrrlicht::Render();
 
     if (m_renderStats)
         renderStats();
@@ -381,7 +382,7 @@ void ChVehicleVisualSystemIrrlicht::renderStats() {
 
     // Display estimated RTF
     if (m_vehicle->GetRTF() > 0) {
-        sprintf(msg, "RTF %3.0f", m_vehicle->GetRTF());
+        sprintf(msg, "RTF %3.2f", m_vehicle->GetRTF());
         renderTextBox(msg, m_HUD_x + 140, m_HUD_y + 120, 120, 15, irr::video::SColor(255, 250, 200, 00));
     }
 

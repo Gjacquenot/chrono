@@ -113,7 +113,6 @@ class MySimpleForklift {
         // visualization properties:
         auto chassis_mesh = chrono_types::make_shared<ChObjFileShape>();
         chassis_mesh->SetFilename(GetChronoDataFile("models/forklift/body.obj"));
-        chassis_mesh->SetTexture(GetChronoDataFile("textures/tire_truck.png"));
         chassis->AddVisualShape(chassis_mesh, ChFrame<>(-COG_truss, QUNIT));
 
         // contact material shared among all wheels
@@ -122,7 +121,6 @@ class MySimpleForklift {
         // visualization shape, shared among all wheels
         auto wheel_mesh = chrono_types::make_shared<ChObjFileShape>();
         wheel_mesh->SetFilename(GetChronoDataFile("models/forklift/wheel.obj"));
-        wheel_mesh->SetTexture(GetChronoDataFile("textures/tire_truck.png"));
 
 
         // ..the right-front wheel
@@ -404,7 +402,7 @@ int main(int argc, char* argv[]) {
 
     // Create the Irrlicht visualization system
     auto vis = chrono_types::make_shared<ChVisualSystemIrrlicht>();
-    sys.SetVisualSystem(vis);
+    vis->AttachSystem(&sys);
     vis->SetWindowSize(800, 600);
     vis->SetWindowTitle("Forklift demo");
     vis->Initialize();
@@ -433,7 +431,7 @@ int main(int argc, char* argv[]) {
     ChRealtimeStepTimer realtime_timer;
     while (vis->Run()) {
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
 
         // Advance the simulation time step
         sys.DoStepDynamics(timestep);

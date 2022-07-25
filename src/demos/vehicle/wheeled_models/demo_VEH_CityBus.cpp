@@ -20,7 +20,6 @@
 // =============================================================================
 
 #include "chrono/core/ChStream.h"
-#include "chrono/core/ChRealtimeStep.h"
 #include "chrono/utils/ChUtilsInputOutput.h"
 
 #include "chrono_vehicle/ChConfigVehicle.h"
@@ -132,7 +131,7 @@ int main(int argc, char* argv[]) {
     std::shared_ptr<RigidTerrain::Patch> patch;
     switch (terrain_model) {
         case RigidTerrain::PatchType::BOX:
-            patch = terrain.AddPatch(patch_mat, ChVector<>(0, 0, 0), ChVector<>(0, 0, 1), terrainLength, terrainWidth);
+            patch = terrain.AddPatch(patch_mat, CSYSNORM, terrainLength, terrainWidth);
             patch->SetTexture(vehicle::GetDataFile("terrain/textures/tile4.jpg"), 200, 200);
             break;
         case RigidTerrain::PatchType::HEIGHT_MAP:
@@ -157,7 +156,7 @@ int main(int argc, char* argv[]) {
     vis->AddTypicalLights();
     vis->AddSkyBox();
     vis->AddLogo();
-    my_bus.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&my_bus.GetVehicle());
 
     // -----------------
     // Initialize output
@@ -197,7 +196,7 @@ int main(int argc, char* argv[]) {
     // force it to playback the driver inputs.
     if (driver_mode == PLAYBACK) {
         driver.SetInputDataFile(driver_file);
-        driver.SetInputMode(ChIrrGuiDriver::DATAFILE);
+        driver.SetInputMode(ChIrrGuiDriver::InputMode::DATAFILE);
     }
 
     driver.Initialize();
@@ -227,7 +226,7 @@ int main(int argc, char* argv[]) {
         vis->EnableContactDrawing(ContactsDrawMode::CONTACT_FORCES);
     }
 
-    ChRealtimeStepTimer realtime_timer;
+    my_bus.GetVehicle().EnableRealtime(true);
     while (vis->Run()) {
         double time = my_bus.GetSystem()->GetChTime();
 
@@ -238,7 +237,7 @@ int main(int argc, char* argv[]) {
         // Render scene and output POV-Ray data
         if (step_number % render_steps == 0) {
             vis->BeginScene();
-            vis->DrawAll();
+            vis->Render();
             vis->EndScene();
 
             if (povray_output) {
@@ -280,9 +279,6 @@ int main(int argc, char* argv[]) {
 
         // Increment frame number
         step_number++;
-
-        // Spin in place for real time to catch up
-        realtime_timer.Spin(step_size);
     }
 
     if (driver_mode == RECORD) {

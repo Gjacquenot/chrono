@@ -5,6 +5,8 @@ Change Log
 ==========
 
 - [Unreleased (development version)](#unreleased-development-branch)
+  - [Chrono:Fsi API changes](#changed-chronofsi-api-changes)
+  - [User-defined SMC contact force calculation](#added-user-defined-smc-contact-force-calculation)
   - [Redesigned run-time visualization system](#changed-redesigned-run-time-visualization-system)
   - [Vehicle inertia properties](#changed-vehicle-inertia-properties)
   - [CMake project configuration script](#changed-cmake-project-configuration-script)
@@ -66,6 +68,45 @@ Change Log
 
 ## Unreleased (development branch)
 
+### [Changed] Chrono::FSI API changes
+
+The public API of Chrono::FSI was further refined to better encapsulate and hide the underlying CUDA implementation from the user.  
+- Only two header files need to be included in most Chrono::FSI user programs: `ChSystemFsi.h` which contains the definition of the top-level FSI system class and `ChDefinitionsFsi.h` which defines various enumerations for problem settings and solution methods.
+- Optionally, the `ChVisualizationFsi.h` header can be included to allow access to OpenGL-based run-time visualization.
+- Simulation parameters (defining the problem and the solution method) can be still be set as before through a specification file in JSON format.  However, each parameter can also be programatically set through various `Set***` methods of `ChSystemFsi`.
+- The order in which various parameters are set is now arbitrary.  All dependent calculations are performed in the `ChSystemFsi::Initialize()` function which **must** be invoked once all setup is completed and before the start of the simulation loop.
+- The set of accessor `Get***` functions of `ChSystemFsi` was enlarged to provide access to various simulation parameters (possibly defined in an input JSON file). 
+- All public API functions in `ChSystemFsi` and `ChVisualizationFsi` only use C++ base types and Chrono types (such as ChVector<>, ChQuaternion<>, etc.)
+- The only disk output from the Chrono::FSI module is optionally enabled by calling `ChSystemFsi::SetOutputDirectory()`. It is the caller's responsibility to ensure that the specified directory exists.  If Chrono::FSI output is enabled, various files with state and forces on rigid- and flex-body BCE markers are saved in an `fsi/` subdirectory of the specified output directory. 
+
+The new optional run-time visualization support for Chrono::FSI simulation requires that the Chrono::OpenGL module is enabled and available. Visualization of SPH particles, boundary BCE markers, rigid-body BCE markers, and flex-body BCE markers can be enabled or disabled individually.  SPH particles are rendered with a point cloud; boundary BCE markers are rendered as boxes (of size equal to the initial particle spacing); solid-body BCE markers are rendered as spheres (of diameter equal to the initial particle spacing). See the various Chrono FSI demos for usage. Note that enabling run-time visualization adds the additional cost of transferring marker positions every time the simulation is rendered.
+
+### [Added] User-defined SMC contact force calculation
+
+A mechanism was added for overriding the default contact force calculation for a collision pait in an SMC system. The user must supply a class derived from `ChSystemSMC::ChContactForceSMC` and register it through a call to `ChSystemSMC::SetContactForceAlgorithm`.
+
+The user is responsible to implement the virtual function 
+```cpp
+        virtual ChVector<> CalculateForce(
+            const ChSystemSMC& sys,             ///< containing system
+            const ChVector<>& normal_dir,       ///< normal contact direction (expressed in global frame)
+            const ChVector<>& p1,               ///< most penetrated point on obj1 (expressed in global frame)
+            const ChVector<>& p2,               ///< most penetrated point on obj2 (expressed in global frame)
+            const ChVector<>& vel1,             ///< velocity of contact point on obj1 (expressed in global frame)
+            const ChVector<>& vel2,             ///< velocity of contact point on obj2 (expressed in global frame)
+            const ChMaterialCompositeSMC& mat,  ///< composite material for contact pair
+            double delta,                       ///< overlap in normal direction
+            double eff_radius,                  ///< effective radius of curvature at contact
+            double mass1,                       ///< mass of obj1
+            double mass2                        ///< mass of obj2
+            ) const = 0;
+```
+which should return the contact force (resultant of the normal and tangential components) for an interaction between two penetrated shapes, given the geometric quantities for the collision.
+
+The default implementation of the SMC contact force calculation is implemented in `ChContactSMC.h` and depends on various settings specified at the ChSystemSMC level (such as normal force model, tangential force model, use of material physical properties, etc).
+
+For an example of overriding the default Chrono behavior, see `demo_IRR_callbackSMC.cpp`.
+
 ### [Changed] Redesigned run-time visualization system
 
 The entire mechanism for defining visualization models, shapes, and materials, as well as constructing and attaching a run-time visualization system to a Chrono system was redefined for more flexibility and to allow plugging in alternative rendering engines.  The new class hierarchy allows sharing of visualization models among different physics items, visualization shapes among different models, and visualization materials among different shapes.
@@ -75,7 +116,7 @@ The entire mechanism for defining visualization models, shapes, and materials, a
 - A visualization model (`ChVisualModel`) is an aggregate of (pointers to) shapes and a transform which specifies the shape position relative to the model reference frame. Visualization shapes in a model are maintained in a vector of `ShapeInstance` (which is simply a typedef for a pair containing a shared pointer to a `ChVisualShape` and a `ChFrame`). Note that, currently a visualization model instance cannot be placed inside another visualization model, but that may be added in the future.
 - A visualization model instance (`ChVisualModelInstance`) is a reference to a visualization model with an associated physics item.  A physics item may have an associated visualization model instance.  
 
-`ChVisualSystem` defines a base class for possible concrete run-time visualization systems and imposes minimal common functionality. A visual system is attached to a ChSystem using `ChSystem::SetVisualSystem`. The Chrono physics system will then trigger automatic updates to the visualization system as needed, depending on the particular type of analysis being conducted.
+`ChVisualSystem` defines a base class for possible concrete run-time visualization systems and imposes minimal common functionality. A ChSystem is attached to a visual system sing `ChVisualSystem::AttachSystem`. The Chrono physics system will then trigger automatic updates to the visualization system as needed, depending on the particular type of analysis being conducted. The visualization system is set up in such a way that derived classes may allow simultaneous rendering of multiple Chrono systems; currently only ChVisualSystemOpenGL supports this feature.
 
 **Defining visualization models**
 
@@ -110,19 +151,19 @@ For convenience, several shortcuts are provided:
 **Defining a visualization system**
 
 While specification of visualization assets (materials, shapes, and models) must now be done as described above for any Chrono run-time visualization system, the Chrono API does not impose how a particular rendering engine should interpret, parse, and render the visual representation of a Chrono system.  
-The suggested mechanism is to define a concrete visualization system (derived from `ChVisualSystem`) and attach it to the Chrono system. Currently, only an Irrlicht-based visualization system is provided through `ChVisualSystemIrrlicht`. This object replaces the now obsolete ChIrrApp. 
+The suggested mechanism is to define a concrete visualization system (derived from `ChVisualSystem`) and attach it to the Chrono system. Currently, an Irrlicht-based and an OpenGL-based visualization systems are provided through `ChVisualSystemIrrlicht` and `ChVisualSystemOpenGL`, respectively. These object replace the now obsolete ChIrrApp and ChOpenGLWindow. 
 
 A typical sequence for creating and attaching an Irrlicht-based visualization system to a Chrono simulation is illustrated below:
 ```cpp
-    auto vis = chrono_types::make_shared<ChVisualSystemIrrlicht>();
-    sys.SetVisualSystem(vis);
-    vis->SetWindowSize(800, 600);
-    vis->SetWindowTitle("Chrono::Irrlicht visualization");
-    vis->Initialize();
-    vis->AddLogo();
-    vis->AddSkyBox();
-    vis->AddCamera(ChVector<>(1, 2, 3));
-    vis->AddTypicalLights();
+    ChVisualSystemIrrlicht vis;
+    vis.SetWindowSize(800, 600);
+    vis.SetWindowTitle("Chrono::Irrlicht visualization");
+    vis.Initialize();
+    vis.AddLogo();
+    vis.AddSkyBox();
+    vis.AddCamera(ChVector<>(1, 2, 3));
+    vis.AddTypicalLights();
+    vis.AttachSystem(&sys);
 ```
 
 Notes:
@@ -135,22 +176,33 @@ Additional rendering options can be enabled with calls to `Enable***` methods wh
 
 A typical simulation loop with Irrlicht-based run-time visualization has the form:
 ```cpp
-    while (vis->Run()) {
-        vis->BeginScene();
-        vis->DrawAll();
+    while (vis.Run()) {
+        vis.BeginScene();
+        vis.Render();
         // make additional Irrlicht-based rendering calls, for example to display a grid:
-        irrlicht::tools::drawGrid(vis->GetVideoDriver(), 0.5, 0.5, 12, 12,
+        irrlicht::tools::drawGrid(vis, 0.5, 0.5, 12, 12,
                                   ChCoordsys<>(ChVector<>(0, -0.5, 0), Q_from_AngX(CH_C_PI_2)),
-                                  irr::video::SColor(50, 80, 110, 110), true);
-        vis->EndScene();
+                                  ChColor(80, 110, 110), true);
+        vis.EndScene();
         sys.DoStepDynamics(step_size);
     }
 ```
 
-
 The Irrlicht visualization system also provides a GUI (displayed using the `i` key during simulation) which allows changing rendering options at run-time.
 
-See the various Chrono demos (in `src/demos/irrlicht/`) for different ways of using the new visualization system mechanism in Chrono.  Note that the Chrono::Vehicle Irrlicht-based visualization systems (`ChWheeledVehicleVisualSystemIrrlicht` and `ChTrackedVehicleVisualSystemIrrlicht`) use a correspondingly similar mechanism for their definition and usage in a vehicle  simulation loop. See demos under `src/demos/vehicle/`. 
+See the various Chrono demos (in `src/demos/irrlicht/`) for different ways of using the new visualization system mechanism in Chrono.
+
+The OpenGL-based visualization system can be used effectively in the same way as ChVisualSystemIrrlicht.
+
+Finally, note that all functions in the public API were changed to use only Chrono data types. In other words, user code need not use types from the Irrlicht or OpenGL namespaces.
+
+**Vehicle-specific visualization system**
+
+While a Chrono::Vehicle simulation can be rendered like any other Chrono system simulation (using either `ChVisualSystemIrrlicht` or `ChVisualSystemOpenGL`), customized derived classes are provided for Irrlicht-based rendering.  These classes provide additional rendering options specific to vehicle systems, including vehicle state information overlay text.  Use `ChWheeledVehicleVisualSystemIrrlicht` for wheeld vehicles and `ChTrackedVehicleVisualSystemIrrlicht` for tracked vehicles.
+
+To enable the vehicle-specific features, attach the vehicle system to the visualization system, using `ChVehicleVisualSystem::AttachVehicle`.
+
+See demos under `src/demos/vehicle/`. 
 
 ### [Changed] Vehicle inertia properties
 
