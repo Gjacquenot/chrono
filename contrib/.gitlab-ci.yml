@@ -186,6 +186,8 @@ linux:arch-llvm:test:
     - cd $CI_PROJECT_DIR
 
 .ubuntu-deploy-base:
+  image:
+    name: ubuntu:focal
   extends: .ubuntu
   before_script:
     # this script overwrites the default ubuntu script to include conda preparations
