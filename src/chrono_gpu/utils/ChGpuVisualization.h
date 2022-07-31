@@ -47,7 +47,6 @@ class CH_GPU_API ChGpuVisualization {
     /// If a supplemental Chrono system is not provided (default), one will be created internally.
     /// </summary>
     /// <param name="sysGPU">Associated Chrono::Gpu system</param>
-    /// <param name="sys">Supplemental Chrono system containing visualization proxies</param>
     ChGpuVisualization(ChSystemGpu* sysGPU);
 
     ~ChGpuVisualization();
@@ -90,6 +89,10 @@ class CH_GPU_API ChGpuVisualization {
     /// Returns false if the visualization window was closed.
     /// If the Chrono::OpenGL module is not available, this function is no-op.
     bool Render();
+
+#ifdef CHRONO_OPENGL
+    opengl::ChVisualSystemOpenGL& GetVisualSystem() const { return *m_vsys; }
+#endif
 
   private:
     ChSystemGpu* m_systemGPU;  ///< associated Chrono::Gpu system
