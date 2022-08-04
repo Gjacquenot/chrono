@@ -18,28 +18,9 @@
 
 #include "chrono_models/robot/viper/Viper.h"
 
-#include "chrono/geometry/ChTriangleMeshConnected.h"
-#include "chrono/physics/ChLinkMotorRotationAngle.h"
-#include "chrono/physics/ChLoadContainer.h"
 #include "chrono/physics/ChSystemSMC.h"
-#include "chrono/utils/ChUtilsInputOutput.h"
-
-#include "chrono/physics/ChSystemNSC.h"
 #include "chrono/physics/ChBodyEasy.h"
-#include "chrono/physics/ChInertiaUtils.h"
-#include "chrono/assets/ChTexture.h"
-#include "chrono/assets/ChTriangleMeshShape.h"
-#include "chrono/geometry/ChTriangleMeshConnected.h"
-
-#include "chrono/utils/ChUtilsCreators.h"
-#include "chrono/utils/ChUtilsGenerators.h"
-#include "chrono/utils/ChUtilsGeometry.h"
 #include "chrono/utils/ChUtilsInputOutput.h"
-#include "chrono/assets/ChBoxShape.h"
-#include "chrono/physics/ChParticleCloud.h"
-#include "chrono/physics/ChLinkMotorRotationSpeed.h"
-#include "chrono/physics/ChLinkMotorRotationTorque.h"
-#include "chrono/physics/ChLinkDistance.h"
 
 #include "chrono_irrlicht/ChVisualSystemIrrlicht.h"
 
@@ -235,7 +216,7 @@ int main(int argc, char* argv[]) {
 
     // Create the Irrlicht visualization sys
     auto vis = chrono_types::make_shared<ChVisualSystemIrrlicht>();
-    sys.SetVisualSystem(vis);
+    vis->AttachSystem(&sys);
     vis->SetCameraVertical(CameraVerticalDir::Z);
     vis->SetWindowSize(800, 600);
     vis->SetWindowTitle("Viper Rover on SCM");
@@ -251,7 +232,7 @@ int main(int argc, char* argv[]) {
     while (vis->Run()) {
         vis->BeginScene();
         vis->GetActiveCamera()->setTarget(core::vector3dfCH(Body_1->GetPos()));
-        vis->DrawAll();
+        vis->Render();
         tools::drawColorbar(vis.get(), 0, 20000, "Pressure yield [Pa]", 1180);
         vis->EndScene();
 

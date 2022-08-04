@@ -238,10 +238,10 @@ int main(int argc, char* argv[]) {
     vis->SetWindowTitle(windowTitle);
     vis->SetChaseCamera(ChVector<>(0.0, 0.0, 1.75), 6.0, 0.5);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    vehicle.SetVisualSystem(vis);
+    vis->AttachVehicle(&vehicle);
 
 #endif
 
@@ -258,7 +258,7 @@ int main(int argc, char* argv[]) {
     while (vis->Run()) {
         // Render scene
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
 
         // Driver inputs
         DriverInputs driver_inputs = driver.GetInputs();

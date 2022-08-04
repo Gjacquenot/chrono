@@ -147,11 +147,20 @@ class CH_FSI_API ChSystemFsi {
     /// Enable/disable adaptive time stepping.
     void SetAdaptiveTimeStepping(bool adaptive);
 
+    /// Enable/disable SPH integration.
+    void SetSPHintegration(bool runSPH);
+
     /// Set SPH discretization type, consistent or inconsistent
     void SetDiscreType(bool useGmatrix, bool useLmatrix);
 
     /// Set wall boundary condition
     void SetWallBC(BceVersion wallBC);
+
+    /// Set rigid body boundary condition
+    void SetRigidBodyBC(BceVersion rigidBodyBC);
+
+    /// Set cohesion force of the granular material
+    void SetCohesionForce(double Fc);
 
     /// Set the linear system solver for implicit methods.
     void SetSPHLinearSolver(SolverType lin_solver);
@@ -230,10 +239,17 @@ class CH_FSI_API ChSystemFsi {
     double GetSimTime() const { return m_time; }
 
     /// Return the SPH particle positions.
-    std::vector<ChVector<>> GetParticlePosOrProperties();
+    std::vector<ChVector<>> GetParticlePositions();
 
     /// Return the SPH particle velocities.
-    std::vector<ChVector<>> GetParticleVel();
+    std::vector<ChVector<>> GetParticleVelocities();
+
+    /// Return the forces acting on SPH particles.
+    std::vector<ChVector<>> GetParticleForces();
+
+    /// Return the SPH particle fluid properties.
+    /// For each SPH particle, the 3-dimensional array contains density, pressure, and viscosity.
+    std::vector<ChVector<>> GetParticleFluidProperties();
 
     /// Get a reference to the FSI bodies.
     /// FSI bodies are the ones seen by the fluid dynamics system.
@@ -430,6 +446,10 @@ class CH_FSI_API ChSystemFsi {
     /// The return value is a device thrust vector.
     thrust::device_vector<Real3> GetParticleVelocities(const thrust::device_vector<int>& indices);
 
+    /// Extract forces applied to all SPH particles with indices in the provided array.
+    /// The return value is a device thrust vector.
+    thrust::device_vector<Real4> GetParticleForces(const thrust::device_vector<int>& indices);
+
   private:
     /// Initialize simulation parameters with default values.
     void InitParams();
@@ -490,6 +510,7 @@ class CH_FSI_API ChSystemFsi {
     std::vector<int> m_fsi_shells_bce_num;  ///< number of BCE particles of each fsi shell
 
     bool m_is_initialized;  ///< set to true once the Initialize function is called
+    bool m_integrate_SPH;  ///< set to true if needs to integrate the fsi solver
     double m_time;          ///< current real time of the simulation
 
     friend class ChVisualizationFsi;

@@ -229,10 +229,10 @@ int main(int argc, char* argv[]) {
     rig->Initialize();
 
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    rig->GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&rig->GetVehicle());
 
     // Set up rig output
     if (!filesystem::create_directory(filesystem::path(out_dir))) {
@@ -250,7 +250,7 @@ int main(int argc, char* argv[]) {
     while (vis->Run()) {
         // Render scene
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
         vis->EndScene();
 
         // Advance simulation of the rig

@@ -85,10 +85,10 @@ int main(int argc, char* argv[]) {
     vis->SetWindowTitle("Semi-trailer truck :: Open Loop");
     vis->SetChaseCamera(trackPoint, 6.0, 0.5);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    truck.GetTractor().SetVisualSystem(vis);
+    vis->AttachVehicle(&truck.GetTractor());
 
     ChIrrGuiDriver driver(*vis);
 
@@ -113,7 +113,7 @@ int main(int argc, char* argv[]) {
         // Render scene
         if (step_number % render_steps == 0) {
             vis->BeginScene();
-            vis->DrawAll();
+            vis->Render();
             vis->EndScene();
         }
 

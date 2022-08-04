@@ -82,7 +82,8 @@ M113AccTest<EnumClass, SHOE_TYPE>::M113AccTest() : m_step(1e-3) {
     m_m113->SetChassisVisualizationType(VisualizationType::NONE);
     m_m113->SetSprocketVisualizationType(VisualizationType::PRIMITIVES);
     m_m113->SetIdlerVisualizationType(VisualizationType::PRIMITIVES);
-    m_m113->SetRoadWheelAssemblyVisualizationType(VisualizationType::PRIMITIVES);
+    m_m113->SetSuspensionVisualizationType(VisualizationType::PRIMITIVES);
+    m_m113->SetIdlerWheelVisualizationType(VisualizationType::PRIMITIVES);
     m_m113->SetRoadWheelVisualizationType(VisualizationType::PRIMITIVES);
     m_m113->SetTrackShoeVisualizationType(VisualizationType::PRIMITIVES);
 
@@ -154,17 +155,17 @@ template <typename EnumClass, EnumClass SHOE_TYPE>
 void M113AccTest<EnumClass, SHOE_TYPE>::SimulateVis() {
 #ifdef CHRONO_IRRLICHT
     auto vis = chrono_types::make_shared<ChTrackedVehicleVisualSystemIrrlicht>();
+    vis->AttachVehicle(&m_m113->GetVehicle());
     vis->SetWindowTitle("M113 acceleration test");
     vis->SetChaseCamera(ChVector<>(0.0, 0.0, 0.0), 6.0, 0.5);
     vis->Initialize();
     vis->AddTypicalLights();
-    m_m113->GetVehicle().SetVisualSystem(vis);
 
     while (vis->Run()) {
         DriverInputs driver_inputs = m_driver->GetInputs();
 
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
         ExecuteStep();
         vis->Synchronize("Acceleration test", driver_inputs);
         vis->Advance(m_step);

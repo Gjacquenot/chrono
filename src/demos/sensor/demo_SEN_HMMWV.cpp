@@ -221,7 +221,7 @@ int main(int argc, char* argv[]) {
     vis->AddTypicalLights();
     vis->AddSkyBox();
     vis->AddLogo();
-    my_hmmwv.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&my_hmmwv.GetVehicle());
 
     // -----------------
     // Initialize output
@@ -307,8 +307,8 @@ int main(int argc, char* argv[]) {
     // Set environment map
     Background b;
     b.mode = BackgroundMode::GRADIENT;
-    b.color_horizon = {.6, .7, .8};
-    b.color_zenith = {.4, .5, .6};
+    b.color_horizon = {0.6f, 0.7f, 0.8f};
+    b.color_zenith = {0.4f, 0.5f, 0.6f};
     manager->scene->SetBackground(b);
 
     // ------------------------------------------------
@@ -429,7 +429,7 @@ int main(int argc, char* argv[]) {
         // Render scene and output POV-Ray data
         if (step_number % render_steps == 0) {
             vis->BeginScene();
-            vis->DrawAll();
+            vis->Render();
             vis->EndScene();
 
             if (povray_output) {

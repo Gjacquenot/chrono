@@ -112,10 +112,10 @@ int main(int argc, char* argv[]) {
     vis->SetWindowTitle("Rigid Terrain Demo");
     vis->SetChaseCamera(ChVector<>(0.0, 0.0, .75), 6.0, 0.5);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    my_hmmwv.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&my_hmmwv.GetVehicle());
 
     // Create the interactive driver system
     ChIrrGuiDriver driver(*vis);
@@ -152,7 +152,7 @@ int main(int argc, char* argv[]) {
 
         // Render scene
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
         vis->EndScene();
 
         // Get driver inputs

@@ -148,7 +148,8 @@ int main(int argc, char* argv[]) {
     m113.SetChassisVisualizationType(VisualizationType::MESH);
     m113.SetSprocketVisualizationType(VisualizationType::MESH);
     m113.SetIdlerVisualizationType(VisualizationType::MESH);
-    m113.SetRoadWheelAssemblyVisualizationType(VisualizationType::NONE);
+    m113.SetIdlerWheelVisualizationType(VisualizationType::MESH);
+    m113.SetSuspensionVisualizationType(VisualizationType::NONE);
     m113.SetRoadWheelVisualizationType(VisualizationType::MESH);
     m113.SetTrackShoeVisualizationType(VisualizationType::MESH);
 
@@ -231,7 +232,7 @@ int main(int argc, char* argv[]) {
         app->SetChaseCamera(ChVector<>(0.0, 0.0, 1.75), 10.0, 0.5);
         app->Initialize();
         app->AddTypicalLights();
-        m113.GetVehicle().SetVisualSystem(app);
+        app->AttachVehicle(&m113.GetVehicle());
     }
 
     // Time interval between two render frames (1/FPS)
@@ -320,7 +321,7 @@ int main(int argc, char* argv[]) {
         // Render scene
         if (app && step_number % render_steps == 0) {
             app->BeginScene();
-            app->DrawAll();
+            app->Render();
             app->EndScene();
         }
 #endif

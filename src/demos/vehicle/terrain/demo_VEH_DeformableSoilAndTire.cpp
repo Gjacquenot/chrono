@@ -131,14 +131,14 @@ int main(int argc, char* argv[]) {
 
     // Create the Irrlicht visualization system
     auto vis = chrono_types::make_shared<ChVisualSystemIrrlicht>();
-    sys.SetVisualSystem(vis);
+    vis->AttachSystem(&sys);
     vis->SetWindowSize(800, 600);
     vis->SetWindowTitle("Deformable soil and deformable tire");
     vis->Initialize();
     vis->AddLogo();
     vis->AddSkyBox();
     vis->AddCamera(ChVector<>(1.0, 1.4, -1.2), ChVector<>(0, tire_rad, 0));
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddLightWithShadow(ChVector<>(1.5, 5.5, -2.5), ChVector<>(0, 0, 0), 3, 2.2, 7.2, 40, 512,
                             ChColor(0.8f, 0.8f, 1.0f));
     vis->EnableShadows();
@@ -166,7 +166,7 @@ int main(int argc, char* argv[]) {
 
     while (vis->Run()) {
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
         tools::drawColorbar(vis.get(), 0, 30000, "Pressure yield [Pa]", 1180);
         vis->EndScene();
         sys.DoStepDynamics(0.002);

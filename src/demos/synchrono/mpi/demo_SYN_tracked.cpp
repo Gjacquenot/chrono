@@ -105,7 +105,7 @@ class IrrAppWrapper {
     void Render() {
         if (m_app) {
             m_app->BeginScene();
-            m_app->DrawAll();
+            m_app->Render();
             m_app->EndScene();
         }
     }
@@ -194,8 +194,9 @@ int main(int argc, char* argv[]) {
     vehicle.SetTrackShoeVisualizationType(track_shoe_vis_type);
     vehicle.SetSprocketVisualizationType(sprocket_vis_type);
     vehicle.SetIdlerVisualizationType(idler_vis_type);
+    vehicle.SetIdlerWheelVisualizationType(idler_vis_type);
     vehicle.SetRoadWheelVisualizationType(road_wheel_vis_type);
-    vehicle.SetRoadWheelAssemblyVisualizationType(road_wheel_assembly_vis_type);
+    vehicle.SetSuspensionVisualizationType(road_wheel_assembly_vis_type);
 
     // Create and initialize the powertrain system
     auto powertrain = ReadPowertrainJSON(powertrain_file);
@@ -218,7 +219,7 @@ int main(int argc, char* argv[]) {
         temp_app->SetChaseCamera(trackPoint, cam_distance, 0.5);
         temp_app->Initialize();
         temp_app->AddTypicalLights();
-        vehicle.SetVisualSystem(temp_app);
+        temp_app->AttachVehicle(&vehicle);
 
         // Create the interactive driver system
         auto irr_driver = chrono_types::make_shared<ChIrrGuiDriver>(*temp_app);

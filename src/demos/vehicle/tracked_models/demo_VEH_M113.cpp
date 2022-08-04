@@ -220,6 +220,8 @@ void SelectSolver(ChSystem& sys, ChSolver::Type& solver_type, ChTimestepper::Typ
                 solver->EnableDiagonalPreconditioner(true);
                 break;
             }
+            default:
+                break;
         }
     }
 
@@ -242,6 +244,7 @@ void SelectSolver(ChSystem& sys, ChSolver::Type& solver_type, ChTimestepper::Typ
             integrator->SetAbsTolerances(1e-4, 1e2);
             break;
         }
+        default:
         case ChTimestepper::Type::EULER_IMPLICIT_LINEARIZED:
         case ChTimestepper::Type::EULER_IMPLICIT_PROJECTED:
             break;
@@ -374,7 +377,8 @@ int main(int argc, char* argv[]) {
     m113.SetChassisVisualizationType(VisualizationType::NONE);
     m113.SetSprocketVisualizationType(track_vis);
     m113.SetIdlerVisualizationType(track_vis);
-    m113.SetRoadWheelAssemblyVisualizationType(track_vis);
+    m113.SetSuspensionVisualizationType(track_vis);
+    m113.SetIdlerWheelVisualizationType(track_vis);
     m113.SetRoadWheelVisualizationType(track_vis);
     m113.SetTrackShoeVisualizationType(track_vis);
 
@@ -534,7 +538,7 @@ int main(int argc, char* argv[]) {
     ////vis->SetChaseCameraPosition(vehicle.GetPos() + ChVector<>(0, 2, 0));
     vis->SetChaseCameraMultipliers(1e-4, 10);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
 
@@ -579,7 +583,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Powertrain type: " << m113.GetPowertrain()->GetTemplateName() << std::endl;
     std::cout << "Vehicle mass: " << vehicle.GetMass() << std::endl;
 
-    m113.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&m113.GetVehicle());
 
     // -----------------
     // Initialize output
@@ -689,13 +693,13 @@ int main(int argc, char* argv[]) {
                 cout << "      R sprocket: " << s_pos_rel.x() << "  " << s_pos_rel.y() << "  " << s_pos_rel.z() << endl;
             }
             cout << "      L suspensions (arm angles):";
-            for (size_t i = 0; i < track_L->GetNumRoadWheelAssemblies(); i++) {
-                cout << " " << track_L->GetRoadWheelAssembly(i)->GetCarrierAngle();
+            for (size_t i = 0; i < track_L->GetNumTrackSuspensions(); i++) {
+                cout << " " << track_L->GetTrackSuspension(i)->GetCarrierAngle();
             }
             cout << endl;
             cout << "      R suspensions (arm angles):";
-            for (size_t i = 0; i < track_R->GetNumRoadWheelAssemblies(); i++) {
-                cout << " " << track_R->GetRoadWheelAssembly(i)->GetCarrierAngle();
+            for (size_t i = 0; i < track_R->GetNumTrackSuspensions(); i++) {
+                cout << " " << track_R->GetTrackSuspension(i)->GetCarrierAngle();
             }
             cout << endl;
         }
@@ -703,7 +707,7 @@ int main(int argc, char* argv[]) {
         if (step_number % render_steps == 0) {
             // Render scene
             vis->BeginScene();
-            vis->DrawAll();
+            vis->Render();
             vis->EndScene();
 
             if (povray_output) {

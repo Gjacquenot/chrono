@@ -180,10 +180,10 @@ int main(int argc, char* argv[]) {
     vis->SetWindowTitle("mrole Demo");
     vis->SetChaseCamera(trackPoint, 6.0, 0.5);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    my_mrole.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&my_mrole.GetVehicle());
 
     // -----------------
     // Initialize output
@@ -276,7 +276,7 @@ int main(int argc, char* argv[]) {
         // Render scene and output POV-Ray data
         if (step_number % render_steps == 0) {
             vis->BeginScene();
-            vis->DrawAll();
+            vis->Render();
             vis->EndScene();
 
             if (povray_output) {

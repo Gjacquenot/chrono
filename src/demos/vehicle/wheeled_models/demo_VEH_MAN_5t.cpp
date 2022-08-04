@@ -156,10 +156,10 @@ int main(int argc, char* argv[]) {
     vis->SetWindowTitle("MAN 5t Truck Demo");
     vis->SetChaseCamera(trackPoint, 10.0, 0.5);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    my_truck.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&my_truck.GetVehicle());
 
     // -----------------
     // Initialize output
@@ -241,7 +241,7 @@ int main(int argc, char* argv[]) {
         // Render scene and output POV-Ray data
         if (step_number % render_steps == 0) {
             vis->BeginScene();
-            vis->DrawAll();
+            vis->Render();
             vis->EndScene();
 
             if (povray_output) {

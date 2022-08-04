@@ -144,7 +144,7 @@ int main(int argc, char* argv[]) {
 
     // Create the Irrlicht visualization system
     auto vis = chrono_types::make_shared<ChVisualSystemIrrlicht>();
-    sys.SetVisualSystem(vis);
+    vis->AttachSystem(&sys);
     vis->SetWindowSize(1280, 720);
     vis->SetWindowTitle("Collisions between objects");
     vis->Initialize();
@@ -160,8 +160,8 @@ int main(int argc, char* argv[]) {
 
     // Simulation loop
     while (vis->Run()) {
-        vis->BeginScene(true, true, ChColor(0.55, 0.63, 0.75));
-        vis->DrawAll();
+        vis->BeginScene(true, true, ChColor(0.55f, 0.63f, 0.75f));
+        vis->Render();
         vis->EndScene();
         sys.DoStepDynamics(0.005);
     }

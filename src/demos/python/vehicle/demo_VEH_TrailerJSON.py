@@ -66,14 +66,14 @@ def main() :
 
     # Create the vehicle Irrlicht interface
     vis = veh.ChWheeledVehicleVisualSystemIrrlicht()
-    vehicle.SetVisualSystem(vis)
     vis.SetWindowTitle('Sedan+Trailer (JSON specification)')
     vis.SetWindowSize(1280, 1024)
     vis.SetChaseCamera(trackPoint, 6.0, 0.5)
     vis.Initialize()
     vis.AddLogo(chrono.GetChronoDataFile('logo_pychrono_alpha.png'))
-    vis.AddTypicalLights()
+    vis.AddLightDirectional()
     vis.AddSkyBox()
+    vis.AttachVehicle(vehicle)
 
     driver = veh.ChIrrGuiDriver(vis)
 
@@ -98,7 +98,7 @@ def main() :
 
         # Render scene
         vis.BeginScene()
-        vis.DrawAll()
+        vis.Render()
         vis.EndScene()
 
         # Collect output data from modules (for inter-module communication)

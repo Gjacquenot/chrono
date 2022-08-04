@@ -129,10 +129,10 @@ int main(int argc, char* argv[]) {
     vis->SetWindowTitle("Gator Acceleration");
     vis->SetChaseCamera(ChVector<>(0.0, 0.0, 2.0), 5.0, 0.05);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    gator.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&gator.GetVehicle());
 
     // ---------------
     // Simulation loop
@@ -150,7 +150,7 @@ int main(int argc, char* argv[]) {
 
         // Render scene
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
         vis->EndScene();
 
         // Get driver inputs

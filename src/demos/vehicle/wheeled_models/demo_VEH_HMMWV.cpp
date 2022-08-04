@@ -158,7 +158,7 @@ int main(int argc, char* argv[]) {
     switch (terrain_model) {
         case RigidTerrain::PatchType::BOX:
             patch = terrain.AddPatch(patch_mat, CSYSNORM, terrainLength, terrainWidth);
-            patch->SetTexture(vehicle::GetDataFile("terrain/textures/tile4.jpg"), 200, 200);
+            patch->SetTexture(vehicle::GetDataFile("terrain/textures/dirt.jpg"), 200, 200);
             break;
         case RigidTerrain::PatchType::HEIGHT_MAP:
             patch = terrain.AddPatch(patch_mat, CSYSNORM, vehicle::GetDataFile("terrain/height_maps/test64.bmp"),
@@ -191,10 +191,10 @@ int main(int argc, char* argv[]) {
     vis->SetWindowTitle("HMMWV Demo");
     vis->SetChaseCamera(trackPoint, 6.0, 0.5);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    my_hmmwv.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&my_hmmwv.GetVehicle());
 
     // -----------------
     // Initialize output
@@ -286,7 +286,7 @@ int main(int argc, char* argv[]) {
         // Render scene and output POV-Ray data
         if (step_number % render_steps == 0) {
             vis->BeginScene();
-            vis->DrawAll();
+            vis->Render();
             vis->EndScene();
 
             if (povray_output) {

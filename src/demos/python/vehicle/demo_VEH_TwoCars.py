@@ -88,16 +88,17 @@ def main():
 
     # Create the vehicle Irrlicht interface
     vis = veh.ChWheeledVehicleVisualSystemIrrlicht()
-    hmmwv_1.GetVehicle().SetVisualSystem(vis)
     vis.SetWindowTitle('Two Car Demo')
     vis.SetWindowSize(1280, 1024)
     vis.SetChaseCamera(chrono.ChVectorD(0.0, 0.0, 0.75), 6.0, 0.5)
     vis.SetChaseCameraState(veh.ChChaseCamera.Track)
     vis.SetChaseCameraPosition(chrono.ChVectorD(-10, 0, 2.0))
     vis.Initialize()
-    vis.AddTypicalLights()
+    vis.AddLightDirectional()
     vis.AddLogo(chrono.GetChronoDataFile('logo_pychrono_alpha.png'))
     vis.AddSkyBox()
+    vis.AttachVehicle(hmmwv_1.GetVehicle())
+
 
     # Simulation loop
     hmmwv_1.GetVehicle().EnableRealtime(True)
@@ -106,7 +107,7 @@ def main():
         time = hmmwv_1.GetSystem().GetChTime()
 
         vis.BeginScene()
-        vis.DrawAll()
+        vis.Render()
         vis.EndScene()
 
         # Get driver inputs

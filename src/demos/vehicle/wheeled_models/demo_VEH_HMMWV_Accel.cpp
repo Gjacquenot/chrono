@@ -167,10 +167,10 @@ int main(int argc, char* argv[]) {
     vis->SetWindowTitle("HMMWV acceleration test");
     vis->SetChaseCamera(ChVector<>(0.0, 0.0, 1.75), 6.0, 0.5);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    my_hmmwv.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&my_hmmwv.GetVehicle());
 
     // ---------------
     // Simulation loop
@@ -234,7 +234,7 @@ int main(int argc, char* argv[]) {
             break;
 
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
 
         // Driver inputs
         DriverInputs driver_inputs = driver.GetInputs();

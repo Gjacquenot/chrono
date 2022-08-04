@@ -199,8 +199,8 @@ void CreateLuggedGeometry(std::shared_ptr<ChBody> wheel_body, std::shared_ptr<Ch
     wheel_body->AddVisualShape(trimesh_shape,ChFrame<>());
 
     auto vis_mat = chrono_types::make_shared<ChVisualMaterial>();
-    vis_mat->SetDiffuseColor({.3, .3, .3});
-    vis_mat->SetSpecularColor({.1f, .1f, .1f});
+    vis_mat->SetDiffuseColor({0.3f, 0.3f, 0.3f});
+    vis_mat->SetSpecularColor({0.1f, 0.1f, 0.1f});
     trimesh_shape->AddMaterial(vis_mat);
 }
 
@@ -312,7 +312,7 @@ int main(int argc, char* argv[]) {
     vis->AddTypicalLights();
     vis->AddSkyBox();
     vis->AddLogo();
-    my_hmmwv.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&my_hmmwv.GetVehicle());
 
     // -----------------
     // Initialize output
@@ -392,7 +392,7 @@ int main(int argc, char* argv[]) {
 
         // Render scene
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
         tools::drawColorbar(vis.get(), 0, 0.1, "Sinkage", 30);
         vis->EndScene();
 

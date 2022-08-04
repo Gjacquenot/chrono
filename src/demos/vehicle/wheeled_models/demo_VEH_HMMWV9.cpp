@@ -122,10 +122,10 @@ int main(int argc, char* argv[]) {
     vis->SetWindowTitle("HMMWV-9 Demo");
     vis->SetChaseCamera(trackPoint, 6.0, 0.5);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    my_hmmwv.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&my_hmmwv.GetVehicle());
 
     // Create the interactive driver system
     ChIrrGuiDriver driver(*vis);
@@ -186,7 +186,7 @@ int main(int argc, char* argv[]) {
         // Render scene and output POV-Ray data
         if (step_number % render_steps == 0) {
             vis->BeginScene();
-            vis->DrawAll();
+            vis->Render();
             vis->EndScene();
 
             if (step_number % render_steps == 0) {

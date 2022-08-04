@@ -74,14 +74,14 @@ def main():
 
     # Create the vehicle Irrlicht interface
     vis = veh.ChWheeledVehicleVisualSystemIrrlicht()
-    my_hmmwv.GetVehicle().SetVisualSystem(vis)
     vis.SetWindowTitle('HMMWV')
     vis.SetWindowSize(1280, 1024)
     vis.SetChaseCamera(trackPoint, 6.0, 0.5)
     vis.Initialize()
     vis.AddLogo(chrono.GetChronoDataFile('logo_pychrono_alpha.png'))
-    vis.AddTypicalLights()
+    vis.AddLightDirectional()
     vis.AddSkyBox()
+    vis.AttachVehicle(my_hmmwv.GetVehicle())
 
     # Initialize output
 
@@ -139,7 +139,7 @@ def main():
             break
 
         vis.BeginScene()
-        vis.DrawAll()
+        vis.Render()
         vis.EndScene()
 
         #Debug logging

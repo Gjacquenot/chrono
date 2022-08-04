@@ -112,10 +112,10 @@ int main(int argc, char* argv[]) {
     vis->SetWindowTitle("Semi-trailer truck :: Follows Straight Line");
     vis->SetChaseCamera(ChVector<>(0.0, 0.0, 1.75), 6.0, 0.5);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    truck.GetTractor().SetVisualSystem(vis);
+    vis->AttachVehicle(&truck.GetTractor());
 
     // ---------------
     // Simulation loop
@@ -162,7 +162,7 @@ int main(int argc, char* argv[]) {
             break;
 
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
 
         // Driver inputs
         DriverInputs driver_inputs = driver.GetInputs();

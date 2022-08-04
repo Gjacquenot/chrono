@@ -134,7 +134,8 @@ int main(int argc, char* argv[]) {
     marder.SetSprocketVisualizationType(track_vis);
     marder.SetIdlerVisualizationType(track_vis);
     marder.SetRollerVisualizationType(track_vis);
-    marder.SetRoadWheelAssemblyVisualizationType(track_vis);
+    marder.SetSuspensionVisualizationType(track_vis);
+    marder.SetIdlerWheelVisualizationType(track_vis);
     marder.SetRoadWheelVisualizationType(track_vis);
     marder.SetTrackShoeVisualizationType(VisualizationType::PRIMITIVES);
 
@@ -213,10 +214,10 @@ int main(int argc, char* argv[]) {
     ////vis->SetChaseCameraPosition(vehicle.GetPos() + ChVector<>(0, 2, 0));
     vis->SetChaseCameraMultipliers(1e-4, 10);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    marder.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&marder.GetVehicle());
 
     // ------------------------
     // Create the driver system
@@ -362,13 +363,13 @@ int main(int argc, char* argv[]) {
                 cout << "      R sprocket: " << s_pos_rel.x() << "  " << s_pos_rel.y() << "  " << s_pos_rel.z() << endl;
             }
             cout << "      L suspensions (arm angles):";
-            for (size_t i = 0; i < track_L->GetNumRoadWheelAssemblies(); i++) {
-                cout << " " << track_L->GetRoadWheelAssembly(i)->GetCarrierAngle();
+            for (size_t i = 0; i < track_L->GetNumTrackSuspensions(); i++) {
+                cout << " " << track_L->GetTrackSuspension(i)->GetCarrierAngle();
             }
             cout << endl;
             cout << "      R suspensions (arm angles):";
-            for (size_t i = 0; i < track_R->GetNumRoadWheelAssemblies(); i++) {
-                cout << " " << track_R->GetRoadWheelAssembly(i)->GetCarrierAngle();
+            for (size_t i = 0; i < track_R->GetNumTrackSuspensions(); i++) {
+                cout << " " << track_R->GetTrackSuspension(i)->GetCarrierAngle();
             }
             cout << endl;
         }
@@ -376,7 +377,7 @@ int main(int argc, char* argv[]) {
         if (step_number % render_steps == 0) {
             // Render scene
             vis->BeginScene();
-            vis->DrawAll();
+            vis->Render();
             vis->EndScene();
 
             if (povray_output) {

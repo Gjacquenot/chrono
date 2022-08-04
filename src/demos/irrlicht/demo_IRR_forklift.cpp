@@ -335,12 +335,12 @@ class MyEventReceiver : public IEventReceiver {
                     return true;
                 case irr::KEY_KEY_S:
                     if (auto mfun =
-                            std::dynamic_pointer_cast<ChFunction_Const>(forklift->link_actuatorFork->Get_dist_funct()))
+                            std::dynamic_pointer_cast<ChFunction_Const>(forklift->link_actuatorFork->GetActuatorFunction()))
                         mfun->Set_yconst(0.05 + mfun->Get_yconst());
                     return true;
                 case irr::KEY_KEY_X:
                     if (auto mfun =
-                            std::dynamic_pointer_cast<ChFunction_Const>(forklift->link_actuatorFork->Get_dist_funct()))
+                            std::dynamic_pointer_cast<ChFunction_Const>(forklift->link_actuatorFork->GetActuatorFunction()))
                         mfun->Set_yconst(-0.05 + mfun->Get_yconst());
                     return true;
                 case irr::KEY_KEY_D:
@@ -402,7 +402,7 @@ int main(int argc, char* argv[]) {
 
     // Create the Irrlicht visualization system
     auto vis = chrono_types::make_shared<ChVisualSystemIrrlicht>();
-    sys.SetVisualSystem(vis);
+    vis->AttachSystem(&sys);
     vis->SetWindowSize(800, 600);
     vis->SetWindowTitle("Forklift demo");
     vis->Initialize();
@@ -431,7 +431,7 @@ int main(int argc, char* argv[]) {
     ChRealtimeStepTimer realtime_timer;
     while (vis->Run()) {
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
 
         // Advance the simulation time step
         sys.DoStepDynamics(timestep);

@@ -70,14 +70,14 @@ def main():
 
     # Create the vehicle Irrlicht interface
     vis = veh.ChWheeledVehicleVisualSystemIrrlicht()
-    my_feda.GetVehicle().SetVisualSystem(vis)
     vis.SetWindowTitle('FED-Alpha')
     vis.SetWindowSize(1280, 1024)
     vis.SetChaseCamera(trackPoint, 6.0, 0.5)
     vis.Initialize()
     vis.AddLogo(chrono.GetChronoDataFile('logo_pychrono_alpha.png'))
-    vis.AddTypicalLights()
+    vis.AddLightDirectional()
     vis.AddSkyBox()
+    vis.AttachVehicle(my_feda.GetVehicle())
 
     # Create the interactive driver system
     driver = veh.ChIrrGuiDriver(vis)
@@ -99,7 +99,7 @@ def main():
         time = my_feda.GetSystem().GetChTime()
 
         vis.BeginScene()
-        vis.DrawAll()
+        vis.Render()
         vis.EndScene()
 
         # Get driver inputs

@@ -107,10 +107,10 @@ int main(int argc, char* argv[]) {
     vis->SetWindowTitle("Articulated Vehicle Demo");
     vis->SetChaseCamera(trackPoint, 6.0, 0.5);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    vehicle.SetVisualSystem(vis);
+    vis->AttachVehicle(&vehicle);
 
     // Initialize interactive driver
     ChIrrGuiDriver driver(*vis);
@@ -130,7 +130,7 @@ int main(int argc, char* argv[]) {
 
         // Render scene
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
         vis->EndScene();
 
         // Get driver inputs

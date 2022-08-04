@@ -16,11 +16,16 @@
 
 #include <string>
 
+#include "chrono/ChConfig.h"
 #include "chrono/physics/ChSystem.h"
 #include "chrono/physics/ChParticleCloud.h"
 
 #include "chrono_fsi/ChApiFsi.h"
 #include "chrono_fsi/ChSystemFsi.h"
+
+#ifdef CHRONO_OPENGL
+    #include "chrono_opengl/ChVisualSystemOpenGL.h"
+#endif
 
 namespace chrono {
 namespace fsi {
@@ -33,24 +38,26 @@ namespace fsi {
 ///
 /// Note that using run-time visualization for a Chrono::FSI system incurs the penalty of collecting positions of all
 /// particles every time the Render() function is invoked.
-///
-/// To implement a moving camera (i.e., prescribe the camera position), get the current instance of the active
-/// Chrono::OpenGL window and use the function ChOpenGLWindow::SetCamera().
 class CH_FSI_API ChVisualizationFsi {
   public:
-    /// Rendering mode for mesh objects.
-    enum class RenderMode {WIREFRAME, SOLID};
+    /// Rendering mode for particles and mesh objects.
+    enum class RenderMode {POINTS, WIREFRAME, SOLID};
 
-    /// Create a run-time visualization object associated with a given Chrono::Fsi system.
+    /// Create a run-time FSI visualization object associated with a given Chrono::Fsi system.
     ChVisualizationFsi(ChSystemFsi* sysFSI);
+
+#ifdef CHRONO_OPENGL
+    /// Create a run-time FSI visualization object associated with a given Chrono::Fsi system and using an existing
+    /// OpenGL visual system.
+    ChVisualizationFsi(ChSystemFsi* sysFSI, opengl::ChVisualSystemOpenGL* vis);
+#endif
+
     ~ChVisualizationFsi();
 
     /// Set title of the visualization window (default: "").
-    /// Must be called before Initialize().
-    void SetTitle(const std::string& title) { m_title = title; }
+    void SetTitle(const std::string& title);
 
     /// Set window dimensions (default: 1280x720).
-    /// Must be called before Initialize().
     void SetSize(int width, int height);
 
     /// Set camera position and target (look at) point.
@@ -64,7 +71,7 @@ class CH_FSI_API ChVisualizationFsi {
 
     /// Set visualization radius for SPH particles (default: half initial spacing).
     /// Must be called before Initialize().
-    void SetVisualizationRadius(double radius);
+    void SetParticleRenderMode(double radius, RenderMode mode = RenderMode::POINTS);
 
     /// Set rendering mode for mesh objects (default: WIREFRAME).
     void SetRenderMode(RenderMode mode);
@@ -107,10 +114,18 @@ class CH_FSI_API ChVisualizationFsi {
     /// If the Chrono::OpenGL module is not available, this function is no-op.
     bool Render();
 
+#ifdef CHRONO_OPENGL
+    opengl::ChVisualSystemOpenGL& GetVisualSystem() const { return *m_vsys; }
+#endif
+
   private:
     ChSystemFsi* m_systemFSI;  ///< associated Chrono::FSI system
     ChSystem* m_system;        ///< internal Chrono system (holds proxy bodies)
     ChSystem* m_user_system;   ///< optional user-provided system
+    bool m_owns_vis;           ///< ownership flag for OpenGL visualization system
+#ifdef CHRONO_OPENGL
+    opengl::ChVisualSystemOpenGL* m_vsys;  ///< OpenGL visualization system
+#endif
 
     double m_radius;           ///< particle visualization radius
     bool m_sph_markers;        ///< render fluid SPH particles?
@@ -120,16 +135,6 @@ class CH_FSI_API ChVisualizationFsi {
 
     std::shared_ptr<ChParticleCloud> m_particles;  ///< particle cloud proxy for SPH markers
     unsigned int m_bce_start_index;                ///< start index of BCE proxy bodies in m_system's body list
-
-    std::string m_title;       ///< visualization window title
-    int m_width;               ///< window width
-    int m_height;              ///< window height
-    ChVector<> m_cam_pos;      ///< current camera position
-    ChVector<> m_cam_target;   ///< current camera look at point
-    ChVector<> m_cam_up;       ///< camera up vector
-    float m_cam_scale;         ///< camera move increment scale
-    RenderMode m_render_mode;  ///< render mode for mesh objects
-    bool m_show_info;          ///< show/hide info overlay
 };
 
 /// @} fsi_utils

@@ -101,10 +101,10 @@ int main(int argc, char* argv[]) {
     vis->SetWindowTitle("Sedan Demo Locked Diff");
     vis->SetChaseCamera(ChVector<>(0.0, 0.0, 1.5), 4.0, 0.5);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    my_sedan.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&my_sedan.GetVehicle());
 
     // Initialize output
     if (!filesystem::create_directory(filesystem::path(out_dir))) {
@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
 
         // Render scene
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
         vis->EndScene();
 
         // Driver inputs

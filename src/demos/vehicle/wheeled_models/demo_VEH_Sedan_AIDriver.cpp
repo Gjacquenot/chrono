@@ -74,10 +74,10 @@ int main(int argc, char* argv[]) {
     vis->SetWindowTitle("Sedan AI Demo");
     vis->SetChaseCamera(ChVector<>(0.0, 0.0, 1.75), 6.0, 0.5);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    my_sedan.GetVehicle().SetVisualSystem(vis);
+    vis->AttachVehicle(&my_sedan.GetVehicle());
 
     // Create the driver system
     // Option 1: use concrete driver class
@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
 
         // Render scene
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
         vis->EndScene();
 
         // Mimic controls from an Autonomy Stack

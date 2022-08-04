@@ -138,7 +138,8 @@ int main(int argc, char* argv[]) {
     vehicle.SetChassisVisualizationType(VisualizationType::PRIMITIVES);
     vehicle.SetSprocketVisualizationType(VisualizationType::PRIMITIVES);
     vehicle.SetIdlerVisualizationType(VisualizationType::PRIMITIVES);
-    vehicle.SetRoadWheelAssemblyVisualizationType(VisualizationType::PRIMITIVES);
+    vehicle.SetSuspensionVisualizationType(VisualizationType::PRIMITIVES);
+    vehicle.SetIdlerWheelVisualizationType(VisualizationType::PRIMITIVES);
     vehicle.SetRoadWheelVisualizationType(VisualizationType::PRIMITIVES);
     vehicle.SetTrackShoeVisualizationType(VisualizationType::PRIMITIVES);
 
@@ -195,10 +196,10 @@ int main(int argc, char* argv[]) {
     ////vis->SetChaseCameraPosition(vehicle.GetPos() + ChVector<>(0, 2, 0));
     vis->SetChaseCameraMultipliers(1e-4, 10);
     vis->Initialize();
-    vis->AddTypicalLights();
+    vis->AddLightDirectional();
     vis->AddSkyBox();
     vis->AddLogo();
-    vehicle.SetVisualSystem(vis);
+    vis->AttachVehicle(&vehicle);
 
     // ------------------------
     // Create the driver system
@@ -365,13 +366,13 @@ int main(int argc, char* argv[]) {
                 cout << "      R sprocket: " << s_pos_rel.x() << "  " << s_pos_rel.y() << "  " << s_pos_rel.z() << endl;
             }
             cout << "      L suspensions (arm angles):" << endl;
-            for (size_t i = 0; i < vehicle.GetTrackAssembly(LEFT)->GetNumRoadWheelAssemblies(); i++) {
-                cout << " " << vehicle.GetTrackAssembly(VehicleSide::LEFT)->GetRoadWheelAssembly(i)->GetCarrierAngle();
+            for (size_t i = 0; i < vehicle.GetTrackAssembly(LEFT)->GetNumTrackSuspensions(); i++) {
+                cout << " " << vehicle.GetTrackAssembly(VehicleSide::LEFT)->GetTrackSuspension(i)->GetCarrierAngle();
             }
             cout << endl;
             cout << "      R suspensions (arm angles):" << endl;
-            for (size_t i = 0; i < vehicle.GetTrackAssembly(RIGHT)->GetNumRoadWheelAssemblies(); i++) {
-                cout << " " << vehicle.GetTrackAssembly(VehicleSide::RIGHT)->GetRoadWheelAssembly(i)->GetCarrierAngle();
+            for (size_t i = 0; i < vehicle.GetTrackAssembly(RIGHT)->GetNumTrackSuspensions(); i++) {
+                cout << " " << vehicle.GetTrackAssembly(VehicleSide::RIGHT)->GetTrackSuspension(i)->GetCarrierAngle();
             }
             cout << endl;
         }
@@ -382,7 +383,7 @@ int main(int argc, char* argv[]) {
 
         // Render scene
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
 #endif
 
         if (step_number % render_steps == 0) {

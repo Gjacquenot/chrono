@@ -114,8 +114,8 @@ int main(int argc, char* argv[]) {
     vis->Initialize();
     vis->AddSkyBox();
     vis->AddLogo();
-    vis->AddTypicalLights();
-    hmmwv_1.GetVehicle().SetVisualSystem(vis);
+    vis->AddLightDirectional();
+    vis->AttachVehicle(&hmmwv_1.GetVehicle());
 
     // ---------------
     // Simulation loop
@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
 
         // Render scene
         vis->BeginScene();
-        vis->DrawAll();
+        vis->Render();
 
         // Driver inputs
         DriverInputs driver_inputs_1 = driver_1.GetInputs();
