@@ -61,8 +61,8 @@ ChSystemFsi::ChSystemFsi(ChSystem& other_physicalSystem)
       m_integrate_SPH(true),
       m_time(0),
       m_write_mode(OutpuMode::NONE) {
-    m_sysFSI = chrono_types::make_unique<ChSystemFsi_impl>();
     m_paramsH = chrono_types::make_shared<SimParams>();
+    m_sysFSI = chrono_types::make_unique<ChSystemFsi_impl>(m_paramsH);
     InitParams();
     m_num_objectsH = m_sysFSI->numObjects;
 
@@ -1783,7 +1783,9 @@ size_t ChSystemFsi::GetNumBoundaryMarkers() const {
     return m_sysFSI->numObjects->numBoundaryMarkers;
 }
 
-std::vector<ChVector<>> ChSystemFsi::GetParticlePosOrProperties() {
+//--------------------------------------------------------------------------------------------------------------------------------
+
+std::vector<ChVector<>> ChSystemFsi::GetParticlePositions() {
     thrust::host_vector<Real4> posRadH = m_sysFSI->sphMarkersD2->posRadD;
     std::vector<ChVector<>> pos;
     for (size_t i = 0; i < posRadH.size(); i++) {
@@ -1792,13 +1794,31 @@ std::vector<ChVector<>> ChSystemFsi::GetParticlePosOrProperties() {
     return pos;
 }
 
-std::vector<ChVector<>> ChSystemFsi::GetParticleVel() {
+std::vector<ChVector<>> ChSystemFsi::GetParticleFluidProperties() {
+    thrust::host_vector<Real4> rhoPresMuH = m_sysFSI->sphMarkersD2->rhoPresMuD;
+    std::vector<ChVector<>> props;
+    for (size_t i = 0; i < rhoPresMuH.size(); i++) {
+        props.push_back(ChUtilsTypeConvert::Real4ToChVector(rhoPresMuH[i]));
+    }
+    return props;
+}
+
+std::vector<ChVector<>> ChSystemFsi::GetParticleVelocities() {
     thrust::host_vector<Real3> velH = m_sysFSI->sphMarkersD2->velMasD;
     std::vector<ChVector<>> vel;
     for (size_t i = 0; i < velH.size(); i++) {
         vel.push_back(ChUtilsTypeConvert::Real3ToChVector(velH[i]));
     }
     return vel;
+}
+
+std::vector<ChVector<>> ChSystemFsi::GetParticleForces() {
+    thrust::host_vector<Real4> dvH = m_sysFSI->GetParticleForces();
+    std::vector<ChVector<>> dv;
+    for (size_t i = 0; i < dvH.size(); i++) {
+        dv.push_back(ChUtilsTypeConvert::Real4ToChVector(dvH[i]));
+    }
+    return dv;
 }
 
 //--------------------------------------------------------------------------------------------------------------------------------
@@ -1824,6 +1844,10 @@ thrust::device_vector<Real4> ChSystemFsi::GetParticlePositions(const thrust::dev
 
 thrust::device_vector<Real3> ChSystemFsi::GetParticleVelocities(const thrust::device_vector<int>& indices) {
     return m_sysFSI->GetParticleVelocities(indices);
+}
+
+thrust::device_vector<Real4> ChSystemFsi::GetParticleForces(const thrust::device_vector<int>& indices) {
+    return m_sysFSI->GetParticleForces(indices);
 }
 
 }  // end namespace fsi
