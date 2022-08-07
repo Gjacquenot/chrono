@@ -13,8 +13,6 @@ build:
     - CC
     - CXX
     - CI_PROJECT_DIR
-    #- VS_VERSION=16.0
-    #- VS_YEAR=2019
 
   number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}
   binary_relocation: true
@@ -25,9 +23,7 @@ build:
 
 requirements:
   build:
-    #- {{ compiler('c')}} # [not win]
-    #- {{ compiler('cxx') }} # [not win]
-    - python
+    - python >= 3.6
     - cmake >=3.10          # [not win]
     - ninja   # [linux or osx]
     - pip     # [linux]
@@ -41,17 +37,19 @@ requirements:
     - libxxf86vm-devel-cos7-x86_64 # [linux]
     - irrlicht
     - opencascade
-    - numpy >=1.16
+    - numpy
     - glew
     - glfw
     - eigen >=3.3.7
-    
+
   run:
-    - python
+    - python >= 3.6
     - mkl
-    - numpy >=1.16
+    - numpy
     - glew
     - glfw
+    - opencascade=7.4.0
+    - irrlicht
 
 test:
   requires:
