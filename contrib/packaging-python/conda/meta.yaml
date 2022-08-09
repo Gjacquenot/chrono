@@ -23,7 +23,7 @@ build:
 
 requirements:
   build:
-    - python >= 3.6
+    - python
     - cmake >=3.10          # [not win]
     - ninja   # [linux or osx]
     - pip     # [linux]
@@ -43,7 +43,7 @@ requirements:
     - eigen >=3.3.7
 
   run:
-    - python >= 3.6
+    - python
     - mkl
     - numpy
     - glew
