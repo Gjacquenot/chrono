@@ -352,7 +352,7 @@ inline bool create_directory(const path& p) {
     return CreateDirectoryW(p.wstr().c_str(), NULL) != 0;
 #else
     auto old_umask = umask(0);
-    auto flag = mkdir(p.str().c_str(), S_IRUSR | S_IWUSR | S_IXUSR);
+    auto flag = mkdir(p.str().c_str(), 0777);
     umask(old_umask);
     return flag == 0;
 #endif
