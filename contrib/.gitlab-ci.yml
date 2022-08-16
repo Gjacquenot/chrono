@@ -396,7 +396,7 @@ windows:vs2022:test:
   extends: .windows
   script:
   - cd build
-  - ctest --output-on-failure
+  - ctest --extra-verbose --output-on-failure
   dependencies: ["windows:vs2022:build"]
 
 windows:vs2019:build:
@@ -425,7 +425,7 @@ windows:vs2019:test:
   extends: .windows
   script:
   - cd build
-  - ctest --output-on-failure
+  - ctest --extra-verbose --output-on-failure
   dependencies: ["windows:vs2019:build"]
 
 windows:vs2019:deploy:
