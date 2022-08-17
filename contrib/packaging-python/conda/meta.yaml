@@ -45,7 +45,7 @@ requirements:
   run:
     - python
     - mkl
-    - numpy
+    - numpy >=1.16
     - glew
     - glfw
 
